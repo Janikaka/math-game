@@ -1,0 +1,9 @@
+<resources>
+    <string name="app_name">Math Game</string>
+    <string name="username_hint">Enter username</string>
+    <string name="participateText">Do you agree to participate in experiments?</string>
+    <string name="participate_yes">Yes</string>
+    <string name="participate_no">No</string>
+    <string name="button_login">Login</string>
+    <string name="username_intro">Hello </string>
+</resources>
