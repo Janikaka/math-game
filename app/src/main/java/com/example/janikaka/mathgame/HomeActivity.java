@@ -61,7 +61,7 @@ public class HomeActivity extends Activity implements OnClickListener {
             //how to play button
         }
         else if(view.getId()==R.id.high_btn){
-            //high scores button
+            showHighScores();
         }
     }
 
@@ -71,6 +71,11 @@ public class HomeActivity extends Activity implements OnClickListener {
         playIntent.putExtra("operators", operators);
         playIntent.putExtra("skip", skip);
         this.startActivity(playIntent);
+    }
+
+    private void showHighScores() {
+        Intent highScoresIntent = new Intent(this, HighScoresActivity.class);
+        this.startActivity(highScoresIntent);
     }
 }
 

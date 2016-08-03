@@ -10,6 +10,13 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 import java.util.Random;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.Date;
+import java.util.List;
+import android.content.SharedPreferences;
 
 /**
  * Created by janikaka on 2.8.2016.
@@ -30,11 +37,14 @@ public class PlayGameActivity extends Activity implements OnClickListener {
     private final int ADD_OPERATOR = 0, SUBTRACT_OPERATOR = 1, MULTIPLY_OPERATOR = 2, DIVIDE_OPERATOR = 3,
             MODULUS_OPERATOR = 4, POWER_OPERATOR = 5;
     private int operator = 0, operand1 = 0, operand2 = 0;
+    private SharedPreferences gamePrefs;
+    public static final String GAME_PREFS = "ArithmeticFile";
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_playgame);
+        gamePrefs = getSharedPreferences(GAME_PREFS, 0);
         random = new Random();
 
         Bundle extras = getIntent().getExtras();
@@ -84,11 +94,13 @@ public class PlayGameActivity extends Activity implements OnClickListener {
         quitBtn.setOnClickListener(this);
 
         setQuestion();
+
     }
 
     @Override
     public void onClick(View view) {
         if (view.getId() == R.id.quit) {
+            setHighScore();
             Intent homeIntent = new Intent(this, HomeActivity.class);
             homeIntent.putExtra("level", level); //1 2 3 4 5
             homeIntent.putExtra("operators", operators); //+ - * / % ^
@@ -102,8 +114,7 @@ public class PlayGameActivity extends Activity implements OnClickListener {
             boolean answerCorrect = checkAnswer();
             if (answerCorrect) {
                 response.setImageResource(R.drawable.tick);
-                String scoreStr = scoreText.getText().toString();
-                int oldScore = Integer.parseInt(scoreStr.substring(scoreStr.lastIndexOf(" ")+1));
+                int oldScore = getScore();
                 scoreText.setText("" + (oldScore + 1));
                 setQuestion();
                 leftToSkip--;
@@ -201,5 +212,72 @@ public class PlayGameActivity extends Activity implements OnClickListener {
             return Integer.parseInt(givenAnswer) == realAnswer;
         }
         return true;
+    }
+
+    private int getScore(){
+        String scoreStr = scoreText.getText().toString();
+        return Integer.parseInt(scoreStr.substring(scoreStr.lastIndexOf(" ")+1));
+    }
+
+    private void setHighScore(){
+        int exScore = getScore();
+        if(exScore>0){
+            //we have a valid score
+            SharedPreferences.Editor scoreEdit = gamePrefs.edit();
+            DateFormat dateForm = new SimpleDateFormat("dd MMMM yyyy");
+            String dateOutput = dateForm.format(new Date());
+            //get existing scores
+            String scores = gamePrefs.getString("highScores", "");
+            //check for scores
+            if(scores.length()>0){
+                //we have existing scores
+                List<Score> scoreStrings = new ArrayList<Score>();
+                //split scores
+                String[] exScores = scores.split("\\|");
+                //add score object for each
+                for(String eSc : exScores){
+                    String[] parts = eSc.split(" - ");
+                    scoreStrings.add(new Score(parts[0], Integer.parseInt(parts[1])));
+                }
+                //new score
+                Score newScore = new Score(dateOutput, exScore);
+                scoreStrings.add(newScore);
+                //sort
+                Collections.sort(scoreStrings);
+                //get top ten
+                StringBuilder scoreBuild = new StringBuilder("");
+                for(int s=0; s<scoreStrings.size(); s++){
+                    if(s>=10) break;
+                    if(s>0) scoreBuild.append("|");
+                    scoreBuild.append(scoreStrings.get(s).getScoreText());
+                }
+                //write to prefs
+                scoreEdit.putString("highScores", scoreBuild.toString());
+                scoreEdit.commit();
+
+            }
+            else{
+                //no existing scores
+                scoreEdit.putString("highScores", ""+dateOutput+" - "+exScore);
+                scoreEdit.commit();
+            }
+        }
+    }
+
+    //set high score if activity destroyed
+    protected void onDestroy(){
+        setHighScore();
+        super.onDestroy();
+    }
+
+    //save instance state
+    @Override
+    public void onSaveInstanceState(Bundle savedInstanceState) {
+        //save score and level
+        int exScore = getScore();
+        savedInstanceState.putInt("score", exScore);
+        savedInstanceState.putInt("level", level);
+        //superclass method
+        super.onSaveInstanceState(savedInstanceState);
     }
 }

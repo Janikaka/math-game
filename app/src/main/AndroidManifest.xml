@@ -17,6 +17,7 @@
         </activity>
         <activity android:name=".HomeActivity"></activity>
         <activity android:name=".PlayGameActivity"></activity>
+        <activity android:name=".HighScoresActivity"></activity>
     </application>
 
 </manifest>
