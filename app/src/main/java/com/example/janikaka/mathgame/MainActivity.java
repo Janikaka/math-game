@@ -55,11 +55,10 @@ public class MainActivity extends Activity implements OnClickListener {
     private void startHome(String key, int value) {
         Intent homeIntent = new Intent(this, HomeActivity.class);
         homeIntent.putExtra("level", value); //1 2 3 4 5
-        homeIntent.putExtra("operators", new int[]{0, 1}); //+ - * / % ^
+        homeIntent.putExtra("operators", new int[]{3}); //+ - * / % ^
         homeIntent.putExtra("highScore", true); //true false
         homeIntent.putExtra("howTo", true); //true false
-        homeIntent.putExtra("help", 0); //0, 1, ...
-        homeIntent.putExtra("skip", 0); //0, 1, ...
+        homeIntent.putExtra("skip", 1); //-1, 0, 1, ...
         this.startActivity(homeIntent);
     }
 

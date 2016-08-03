@@ -12,28 +12,43 @@ import android.widget.RadioButton;
  * Created by janikaka on 2.8.2016.
  */
 public class HomeActivity extends Activity implements OnClickListener {
-    private Button playBtn, helpBtn, highBtn;
+    private Button playBtn, howToBtn, highBtn;
     private int level;
     private int[] operators;
+    private int skip;
+    private boolean highScore;
+    private boolean howTo;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_home);
         playBtn = (Button)findViewById(R.id.play_btn);
-        helpBtn = (Button)findViewById(R.id.help_btn);
+        howToBtn = (Button)findViewById(R.id.help_btn);
         highBtn = (Button)findViewById(R.id.high_btn);
 
         playBtn.setOnClickListener(this);
-        helpBtn.setOnClickListener(this);
-        highBtn.setOnClickListener(this);
+
+
 
         Bundle extras = getIntent().getExtras();
         if(extras !=null) {
             level = extras.getInt("level");
             operators = extras.getIntArray("operators");
+            skip = extras.getInt("skip");
+            highScore = extras.getBoolean("highScore");
+            howTo = extras.getBoolean("howTo");
         }
-
+        if(highScore) {
+            highBtn.setOnClickListener(this);
+        } else {
+            highBtn.setVisibility(View.INVISIBLE);
+        }
+        if(howTo) {
+            howToBtn.setOnClickListener(this);
+        } else {
+            howToBtn.setVisibility(View.INVISIBLE);
+        }
 
     }
 
@@ -54,6 +69,7 @@ public class HomeActivity extends Activity implements OnClickListener {
         Intent playIntent = new Intent(this, PlayGameActivity.class);
         playIntent.putExtra("level", level);
         playIntent.putExtra("operators", operators);
+        playIntent.putExtra("skip", skip);
         this.startActivity(playIntent);
     }
 }
