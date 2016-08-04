@@ -40,7 +40,6 @@ public class MainActivity extends Activity implements OnClickListener {
 
         usernameInput = (EditText) findViewById(R.id.username);
         participate_yes = (RadioButton) findViewById(R.id.participate_yes);
-        //participate_no = (RadioButton) findViewById(R.id.participate_no);
         loginButton = (Button) findViewById(R.id.login_button);
         loginButton.setOnClickListener(this);
     }

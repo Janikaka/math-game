@@ -23,14 +23,14 @@ import android.content.SharedPreferences;
  */
 public class PlayGameActivity extends Activity implements OnClickListener {
     private Random random;
-    private TextView questionText;
-    private TextView answerText;
-    private TextView scoreText;
+    private TextView questionText, answerText, scoreText, cheatText;
     
     private ImageView response;
     private int level;
     private int[] operators;
     private int skip;
+    private boolean highScore;
+    private boolean howTo;
     private int leftToSkip;
     private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, enterBtn, clearBtn, quitBtn, skipBtn;
 
@@ -52,10 +52,13 @@ public class PlayGameActivity extends Activity implements OnClickListener {
             level = extras.getInt("level");
             operators = extras.getIntArray("operators");
             skip = extras.getInt("skip");
+            highScore = extras.getBoolean("highScore");
+            howTo = extras.getBoolean("howTo");
         }
         questionText = (TextView) findViewById(R.id.question);
         answerText = (TextView) findViewById(R.id.answer);
         scoreText = (TextView) findViewById(R.id.score);
+        cheatText = (TextView) findViewById(R.id.cheat);
         response = (ImageView) findViewById(R.id.response);
         btn1 = (Button)findViewById(R.id.btn1);
         btn2 = (Button)findViewById(R.id.btn2);
@@ -104,8 +107,8 @@ public class PlayGameActivity extends Activity implements OnClickListener {
             Intent homeIntent = new Intent(this, HomeActivity.class);
             homeIntent.putExtra("level", level); //1 2 3 4 5
             homeIntent.putExtra("operators", operators); //+ - * / % ^
-            homeIntent.putExtra("highScore", true); //true false
-            homeIntent.putExtra("howTo", true); //true false
+            homeIntent.putExtra("highScore", highScore); //true false
+            homeIntent.putExtra("howTo", howTo); //true false
             homeIntent.putExtra("skip", skip); //-1, 0, 1, ...
             this.startActivity(homeIntent);
         }else if (view.getId() == R.id.skip && leftToSkip <= 0) {
@@ -172,6 +175,7 @@ public class PlayGameActivity extends Activity implements OnClickListener {
             operand2 = 2;
         }
         questionText.setText(operand1 + " " + operatorMark + " " + operand2 + " = ");
+        cheatText.setText("" + getRealAnswer());
     }
 
     private int getOperand(int level) {
@@ -191,27 +195,25 @@ public class PlayGameActivity extends Activity implements OnClickListener {
     }
 
     private boolean checkAnswer() {
-        String givenAnswer = answerText.getText().toString();
+        int realAnswer = getRealAnswer();
+        return realAnswer == Integer.parseInt(answerText.getText().toString());
+    }
+
+    private int getRealAnswer() {
         if (operator == 0) {
-            int realAnswer = operand1 + operand2;
-            return Integer.parseInt(givenAnswer) == realAnswer;
+            return operand1 + operand2;
         } else if (operator == 1) {
-            int realAnswer = operand1 - operand2;
-            return Integer.parseInt(givenAnswer) == realAnswer;
+            return operand1 - operand2;
         } else if(operator == 2) {
-            int realAnswer = operand1 * operand2;
-            return Integer.parseInt(givenAnswer) == realAnswer;
+            return operand1 * operand2;
         } else if(operator == 3) {
-            int realAnswer = operand1 / operand2;
-            return Integer.parseInt(givenAnswer) == realAnswer;
+            return operand1 / operand2;
         } else if(operator == 4) {
-            int realAnswer = operand1 % operand2;
-            return Integer.parseInt(givenAnswer) == realAnswer;
+            return operand1 % operand2;
         } else if(operator == 5) {
-            int realAnswer = operand1 * operand1;
-            return Integer.parseInt(givenAnswer) == realAnswer;
+            return operand1 * operand1;
         }
-        return true;
+        return 0;
     }
 
     private int getScore(){

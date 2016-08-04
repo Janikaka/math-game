@@ -70,6 +70,8 @@ public class HomeActivity extends Activity implements OnClickListener {
         playIntent.putExtra("level", level);
         playIntent.putExtra("operators", operators);
         playIntent.putExtra("skip", skip);
+        playIntent.putExtra("highScore", highScore);
+        playIntent.putExtra("howTo", howTo);
         this.startActivity(playIntent);
     }
 

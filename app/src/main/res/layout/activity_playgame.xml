@@ -297,5 +297,17 @@
             android:textColor="#ffcccccc"
             android:textSize="30sp"
             android:textStyle="bold" />
+        <TextView
+            android:id="@+id/cheat"
+            android:layout_width="0dp"
+            android:layout_height="match_parent"
+            android:layout_marginBottom="2dp"
+            android:layout_marginRight="2dp"
+            android:layout_marginTop="2dp"
+            android:layout_weight="1"
+            android:background="#ffffffff"
+            android:gravity="center|left"
+            android:textColor="#ff333333"
+            android:textSize="30sp" />
     </LinearLayout>
 </LinearLayout>
