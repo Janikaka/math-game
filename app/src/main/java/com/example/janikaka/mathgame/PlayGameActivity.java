@@ -31,6 +31,10 @@ public class PlayGameActivity extends Activity implements OnClickListener {
     private int skip;
     private boolean highScore;
     private boolean howTo;
+    private Dataitem gameplayDataitem;
+
+    private String username;
+
     private int leftToSkip;
     private Button btn0, btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9, enterBtn, clearBtn, quitBtn, skipBtn;
 
@@ -54,6 +58,7 @@ public class PlayGameActivity extends Activity implements OnClickListener {
             skip = extras.getInt("skip");
             highScore = extras.getBoolean("highScore");
             howTo = extras.getBoolean("howTo");
+            username = extras.getString("username");
         }
         questionText = (TextView) findViewById(R.id.question);
         answerText = (TextView) findViewById(R.id.answer);
@@ -95,9 +100,7 @@ public class PlayGameActivity extends Activity implements OnClickListener {
         enterBtn.setOnClickListener(this);
         clearBtn.setOnClickListener(this);
         quitBtn.setOnClickListener(this);
-
-        setQuestion();
-
+        setNewGameplay();
     }
 
     @Override
@@ -127,8 +130,11 @@ public class PlayGameActivity extends Activity implements OnClickListener {
                 }
                 answerText.setText("?");
             } else {
+                sendGameplayDataitem();
+                setNewGameplay();
                 response.setImageResource(R.drawable.cross);
                 answerText.setText("?");
+                setHighScore();
             }
         } else if(view.getId() == R.id.clear) {
             answerText.setText("?");
@@ -197,6 +203,13 @@ public class PlayGameActivity extends Activity implements OnClickListener {
     private boolean checkAnswer() {
         int realAnswer = getRealAnswer();
         return realAnswer == Integer.parseInt(answerText.getText().toString());
+    }
+
+    private void setNewGameplay() {
+        gameplayDataitem = new Dataitem("gameplay", username);
+        gameplayDataitem.setValue(1);
+        scoreText.setText("Score: 0");
+        setQuestion();
     }
 
     private int getRealAnswer() {
@@ -281,5 +294,17 @@ public class PlayGameActivity extends Activity implements OnClickListener {
         savedInstanceState.putInt("level", level);
         //superclass method
         super.onSaveInstanceState(savedInstanceState);
+    }
+
+    private void sendGameplayDataitem() {
+        gameplayDataitem.setEndDatetime();
+        Dataitem dt = gameplayDataitem;
+        String key = dt.getKey();
+        int value = dt.getValue();
+        String startDatetime = dt.getStartDatetime();
+        String endDatetime = dt.getEndDatetime();
+        String username = dt.getUsername();
+
+        Log.v("Sending dataitem", "key: " + key + ", value: " + value + ", startDatetime:" + startDatetime + ", endDatetime: " + endDatetime + ", username: " + username);
     }
 }

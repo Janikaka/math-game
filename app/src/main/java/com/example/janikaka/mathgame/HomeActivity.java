@@ -18,6 +18,7 @@ public class HomeActivity extends Activity implements OnClickListener {
     private int skip;
     private boolean highScore;
     private boolean howTo;
+    private String username;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -38,6 +39,7 @@ public class HomeActivity extends Activity implements OnClickListener {
             skip = extras.getInt("skip");
             highScore = extras.getBoolean("highScore");
             howTo = extras.getBoolean("howTo");
+            username = extras.getString("username");
         }
         if(highScore) {
             highBtn.setOnClickListener(this);
@@ -72,6 +74,7 @@ public class HomeActivity extends Activity implements OnClickListener {
         playIntent.putExtra("skip", skip);
         playIntent.putExtra("highScore", highScore);
         playIntent.putExtra("howTo", howTo);
+        playIntent.putExtra("username", username);
         this.startActivity(playIntent);
     }
 

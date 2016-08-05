@@ -30,6 +30,7 @@ import okhttp3.Response;
 public class MainActivity extends Activity implements OnClickListener {
     private EditText usernameInput;
     private RadioButton participate_yes;
+    private String username;
     //private RadioButton participate_no;
     private Button loginButton;
 
@@ -110,10 +111,10 @@ public class MainActivity extends Activity implements OnClickListener {
     @Override
     public void onClick(View view) {
         if(view.getId()==R.id.login_button) {
-            String username = usernameInput.getText().toString();
+            username = usernameInput.getText().toString();
             boolean participates = participate_yes.isChecked();
             if(participates) {
-                getConfiguration(username);
+                getConfiguration();
             } else {
                 startHome(new Configuration());
             }
@@ -127,10 +128,11 @@ public class MainActivity extends Activity implements OnClickListener {
         homeIntent.putExtra("highScore", configuration.getHighScore());
         homeIntent.putExtra("howTo", configuration.getHowTo());
         homeIntent.putExtra("skip", configuration.getSkip());
+        homeIntent.putExtra("username", username);
         this.startActivity(homeIntent);
     }
 
-    private void getConfiguration(String username) {
+    private void getConfiguration() {
         int level;
         int[] operators;
         boolean highScore;
