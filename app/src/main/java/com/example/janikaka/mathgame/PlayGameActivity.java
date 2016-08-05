@@ -9,6 +9,8 @@ import android.view.View.OnClickListener;
 import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import java.io.IOException;
 import java.util.Random;
 import java.text.DateFormat;
 import java.text.SimpleDateFormat;
@@ -17,6 +19,20 @@ import java.util.Collections;
 import java.util.Date;
 import java.util.List;
 import android.content.SharedPreferences;
+
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import okhttp3.Call;
+import okhttp3.Callback;
+import okhttp3.FormBody;
+import okhttp3.Headers;
+import okhttp3.MediaType;
+import okhttp3.OkHttpClient;
+import okhttp3.Request;
+import okhttp3.RequestBody;
+import okhttp3.Response;
 
 /**
  * Created by janikaka on 2.8.2016.
@@ -304,7 +320,33 @@ public class PlayGameActivity extends Activity implements OnClickListener {
         String startDatetime = dt.getStartDatetime();
         String endDatetime = dt.getEndDatetime();
         String username = dt.getUsername();
+        String url = "http://httpbin.org/post";
 
-        Log.v("Sending dataitem", "key: " + key + ", value: " + value + ", startDatetime:" + startDatetime + ", endDatetime: " + endDatetime + ", username: " + username);
+        String json = "{'key': " + key + ", 'value': " + value + ", 'startDatetime': " + startDatetime + ", 'endDatetime': " + endDatetime + "}";
+
+        OkHttpClient client = new OkHttpClient();
+        RequestBody jsonBody = RequestBody.create(MediaType.parse("application/json"), json);
+        Request request = new Request.Builder()
+                .url(url)
+                .header("username", username)
+                .post(jsonBody)
+                .build();
+
+        client.newCall(request).enqueue(new Callback() {
+            @Override public void onFailure(Call call, IOException e) {
+                e.printStackTrace();
+            }
+            @Override public void onResponse(Call call, Response response) throws IOException {
+                if (!response.isSuccessful()) throw new IOException("Unexpected code " + response);
+
+                Headers responseHeaders = response.headers();
+                for (int i = 0, size = responseHeaders.size(); i < size; i++) {
+                    System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
+                }
+                String data = response.body().string();
+                Log.v("Dataitem response", data);
+            }
+        });
+
     }
 }

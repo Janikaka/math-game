@@ -140,6 +140,7 @@ public class MainActivity extends Activity implements OnClickListener {
         int skip;
         String url = "https://raw.githubusercontent.com/Janikaka/TestServer/master/README.md";
         OkHttpClient client = new OkHttpClient();
+
         Request request = new Request.Builder()
                 .url(url)
                 .build();
