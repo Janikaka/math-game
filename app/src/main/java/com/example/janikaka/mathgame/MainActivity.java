@@ -138,11 +138,12 @@ public class MainActivity extends Activity implements OnClickListener {
         boolean highScore;
         boolean howTo;
         int skip;
-        String url = "https://raw.githubusercontent.com/Janikaka/TestServer/master/README.md";
+        String url = "http://10.0.2.2:6543/configurations";
         OkHttpClient client = new OkHttpClient();
 
         Request request = new Request.Builder()
                 .url(url)
+                .header("username", username)
                 .build();
 
         client.newCall(request).enqueue(new Callback() {
@@ -157,6 +158,7 @@ public class MainActivity extends Activity implements OnClickListener {
                     System.out.println(responseHeaders.name(i) + ": " + responseHeaders.value(i));
                 }
                 String data = response.body().string();
+                Log.v("Response", data);
                 try {
                     JSONObject Jobject = new JSONObject(data);
                     JSONArray JArray = Jobject.getJSONArray("data");

@@ -174,14 +174,21 @@ public class PlayGameActivity extends Activity implements OnClickListener {
     private void setQuestion() {
         operator = operators[random.nextInt(operators.length)];
         char operatorMark = '+';
-        operand1 = getOperand(level);
-        operand2 = getOperand(level);
+        int modifiedLevel = level;
+        if (operator == 2 || operator == 3 || operator == 4) {
+            modifiedLevel--;
+            if(modifiedLevel == 0) {
+                modifiedLevel = 1;
+            }
+        }
+        operand1 = getOperand(modifiedLevel);
+        operand2 = getOperand(modifiedLevel);
         if (operator == 0) {
             operatorMark = '+';
         } else if(operator == 1) {
             operatorMark = '-';
             while(operand1 < operand2) {
-                operand1 = getOperand(level);
+                operand1 = getOperand(modifiedLevel);
             }
         } else if(operator == 2) {
             operatorMark = '*';
@@ -314,16 +321,16 @@ public class PlayGameActivity extends Activity implements OnClickListener {
 
     private void sendGameplayDataitem() {
         gameplayDataitem.setEndDatetime();
-        Dataitem dt = gameplayDataitem;
+        Dataitem dt = gameplayDataitem; //is this necessary because of async?
         String key = dt.getKey();
         int value = dt.getValue();
         String startDatetime = dt.getStartDatetime();
         String endDatetime = dt.getEndDatetime();
         String username = dt.getUsername();
-        String url = "http://httpbin.org/post";
+        String url = "http://10.0.2.2:6543/events";
 
-        String json = "{'key': " + key + ", 'value': " + value + ", 'startDatetime': " + startDatetime + ", 'endDatetime': " + endDatetime + "}";
-
+        String json = "{\"key\": \"" + key + "\", \"value\": " + value + ", \"startDatetime\": \"" + startDatetime + "\", \"endDatetime\": \"" + endDatetime + "\"}";
+        Log.v("JSON", json);
         OkHttpClient client = new OkHttpClient();
         RequestBody jsonBody = RequestBody.create(MediaType.parse("application/json"), json);
         Request request = new Request.Builder()
